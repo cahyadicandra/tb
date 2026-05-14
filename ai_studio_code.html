@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaBa - Task Balance | Underwater Collaboration</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Contribution -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="ocean-bg">
+        <div class="bubbles"></div>
+        <div class="fish-silhouette"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i data-lucide="waves"></i> <span>TaBa</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Demo</a></li>
+            </ul>
+            <div class="nav-btns">
+                <button class="btn-join" onclick="openModal('joinModal')">Join Room</button>
+                <button class="btn-primary" onclick="openModal('createModal')">Create Room</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LANDING PAGE -->
+    <main id="landing-page">
+        <!-- Hero -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Kerja Kelompok Jadi Lebih Adil.</h1>
+                <p>Pantau kontribusi anggota, validasi tugas, dan hilangkan budaya "numpang nama" dengan asisten bawah laut TaBa.</p>
+                <div class="hero-btns">
+                    <button class="btn-primary btn-lg" onclick="openModal('createModal')">Mulai Sekarang</button>
+                    <button class="btn-outline btn-lg">Lihat Demo</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card task-card-mockup">
+                    <div class="mock-header"></div>
+                    <div class="mock-line"></div>
+                    <div class="mock-line short"></div>
+                    <div class="mock-badge">High Priority</div>
+                </div>
+                <div class="hero-img">🐙</div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="features">
+            <h2 class="section-title">Fitur Unggulan</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="f-icon">🐬</div>
+                    <h3>Smart Distribution</h3>
+                    <p>Bagi tugas secara otomatis dan adil antar anggota.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">🦈</div>
+                    <h3>Contribution Tracking</h3>
+                    <p>Visualisasi kontribusi setiap anggota secara real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="f-icon">🐢</div>
+                    <h3>Team Validation</h3>
+                    <p>Sistem voting untuk memastikan kualitas hasil kerja.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- DASHBOARD (HIDDEN BY DEFAULT) -->
+    <div id="dashboard-page" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-logo">TaBa</div>
+            <nav class="side-nav">
+                <button onclick="showTab('chat')" class="active"><i data-lucide="message-circle"></i> Chat Room</button>
+                <button onclick="showTab('tasks')"><i data-lucide="check-square"></i> Task Board</button>
+                <button onclick="showTab('validation')"><i data-lucide="shield-check"></i> Validation</button>
+                <button onclick="showTab('contribution')"><i data-lucide="pie-chart"></i> Statistics</button>
+            </nav>
+            <button class="btn-leave" onclick="leaveRoom()"><i data-lucide="log-out"></i> Leave Room</button>
+        </aside>
+
+        <main class="dash-content">
+            <header class="dash-header">
+                <div class="room-info">
+                    <h2 id="display-room-name">Nama Kelompok</h2>
+                    <span class="room-badge" id="display-room-code">#CODE</span>
+                </div>
+                <div class="user-meta">
+                    <span id="user-display-name">User</span>
+                    <div class="avatar-circle" id="user-display-avatar">🐙</div>
+                </div>
+            </header>
+
+            <!-- DASHBOARD TABS -->
+            <section id="tab-chat" class="tab-pane active">
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ketik pesan gelembung...">
+                        <button onclick="sendMessage()" class="btn-send"><i data-lucide="send"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-tasks" class="tab-pane">
+                <div class="tab-header">
+                    <h3>Task Board</h3>
+                    <div class="task-actions">
+                        <button class="btn-small" onclick="autoAssign()">Auto Assign</button>
+                        <button class="btn-primary" onclick="openModal('addTaskModal')">+ Tambah Task</button>
+                    </div>
+                </div>
+                <div id="task-list" class="task-grid"></div>
+            </section>
+
+            <section id="tab-validation" class="tab-pane">
+                <h3>Validasi Hasil Kerja</h3>
+                <div id="validation-list" class="validation-container"></div>
+            </section>
+
+            <section id="tab-contribution" class="tab-pane">
+                <h3>Statistik Kontribusi</h3>
+                <div class="stats-layout">
+                    <div class="chart-box">
+                        <canvas id="contributionChart"></canvas>
+                    </div>
+                    <div id="ranking-list" class="ranking-box"></div>
+                </div>
+                <button class="btn-primary" onclick="downloadReport()" style="margin-top: 20px;">Download Report</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="createModal" class="modal">
+        <div class="modal-content glass">
+            <h2>Buat Kelompok Baru 🌊</h2>
+            <input type="text" id="create-room-name" placeholder="Nama Kelompok">
+            <input type="text" id="create-leader-name" placeholder="Nama Anda (Leader)">
+            <select id="create-subject">
+                <option value="Tugas Akhir">Tugas Akhir</option>
+                <option value="Matakuliah">Matakuliah</option>
+                <option value="Proyek Bebas">Proyek Bebas</option>
+            </select>
+            <button class="btn-primary w-100" onclick="handleCreateRoom()">Bangun Kerajaan</button>
+            <button class="btn-text w-100" onclick="closeModal('createModal')">Batal</button>
+        </div>
+    </div>
+
+    <div id="joinModal" class="modal">
+        <div class="modal-content glass">
+            <h2>Gabung Kelompok 🐠</h2>
+            <input type="text" id="join-name" placeholder="Nama Anda">
+            <input type="text" id="join-code" placeholder="Kode Room (TABA-XXXX)">
+            <div class="avatar-select">
+                <p>Pilih Avatar:</p>
+                <div class="avatar-options">
+                    <span onclick="selectAvatar(this)">🦈</span>
+                    <span onclick="selectAvatar(this)">🐬</span>
+                    <span onclick="selectAvatar(this)">🐋</span>
+                    <span onclick="selectAvatar(this)">🐙</span>
+                    <span onclick="selectAvatar(this)">🦀</span>
+                    <span onclick="selectAvatar(this)">🐠</span>
+                </div>
+            </div>
+            <button class="btn-primary w-100" onclick="handleJoinRoom()">Menyelam Sekarang</button>
+            <button class="btn-text w-100" onclick="closeModal('joinModal')">Batal</button>
+        </div>
+    </div>
+
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content glass">
+            <h2>Tambah Tugas 📝</h2>
+            <input type="text" id="task-name" placeholder="Judul Tugas">
+            <textarea id="task-desc" placeholder="Deskripsi Tugas"></textarea>
+            <select id="task-difficulty">
+                <option value="10">Easy (10 Pts)</option>
+                <option value="20">Medium (20 Pts)</option>
+                <option value="35">Hard (35 Pts)</option>
+                <option value="50">Priority (50 Pts)</option>
+            </select>
+            <button class="btn-primary w-100" onclick="handleAddTask()">Tambah</button>
+            <button class="btn-text w-100" onclick="closeModal('addTaskModal')">Batal</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
